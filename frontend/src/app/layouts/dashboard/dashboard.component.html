@@ -1,0 +1,33 @@
+<div class="dashboard-container layout-wrapper">
+    <!-- Small side-nav (ribbon) -->
+    <div class="sidebar-ribbon glass-panel">
+        <div class="brand">ISN</div>
+        <div class="nav-items">
+            <div class="nav-item active" title="Dashboard">
+                <span class="icon">📊</span>
+            </div>
+            <!-- Additional generic nav icons could go here -->
+        </div>
+        <div class="nav-bottom">
+            <div class="nav-item" title="Logout" (click)="logout()">
+                <span class="icon">🚪</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content area where child routes render -->
+    <div class="dashboard-content">
+        <!-- Header -->
+        <header class="dashboard-header glass-panel">
+            <div class="header-title">
+                <h2 class="gradient-text">Portal Dashboard</h2>
+                <span class="badge">{{ role | uppercase }} VIEW</span>
+            </div>
+        </header>
+
+        <!-- Child component (HC/ISN/Contractor) rendered here -->
+        <div class="route-content">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</div>

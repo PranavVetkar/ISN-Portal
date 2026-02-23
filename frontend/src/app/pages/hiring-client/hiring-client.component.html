@@ -1,0 +1,47 @@
+<div class="hc-dashboard animate-fade-in">
+    <div class="dashboard-header-content">
+        <h3>Create New Requirement</h3>
+        <p class="text-muted">Define your project needs to share with ISNs.</p>
+    </div>
+
+    <div class="glass-panel form-card">
+        <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+        <form (ngSubmit)="onSubmit()" #reqForm="ngForm" class="requirement-form">
+            <div class="form-row">
+                <div class="form-group flex-1">
+                    <label class="form-label" for="name">Project/Requirement Name</label>
+                    <input type="text" id="name" name="name" [(ngModel)]="newRequirement.name" class="form-control"
+                        required placeholder="e.g. Electrical Maintenance Phase 2">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="description">Detailed Description</label>
+                <textarea id="description" name="description" [(ngModel)]="newRequirement.description"
+                    class="form-control" rows="5" required
+                    placeholder="Describe the work required, specific skills, and expectations..."></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group flex-1">
+                    <label class="form-label" for="workers">Number of Workers Required</label>
+                    <input type="number" id="workers" name="workers" [(ngModel)]="newRequirement.workers_required"
+                        class="form-control" required min="1">
+                </div>
+                <div class="form-group flex-1">
+                    <label class="form-label" for="startDate">Starting Date of Work</label>
+                    <input type="date" id="startDate" name="startDate" [(ngModel)]="newRequirement.start_date"
+                        class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" [disabled]="!reqForm.valid || isSubmitting">
+                    {{ isSubmitting ? 'Publishing...' : 'Publish Requirement' }}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

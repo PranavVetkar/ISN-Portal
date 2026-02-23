@@ -1,0 +1,114 @@
+<div class="split-pane-layout animate-fade-in">
+    <!-- Left List Pane -->
+    <div class="list-pane glass-panel list-container">
+        <div class="pane-header">
+            <h4>Requirements Inbox</h4>
+        </div>
+        <div class="list-contents">
+            <div class="list-item" *ngFor="let req of requirements" [class.active]="selectedRequirement?.id === req.id"
+                (click)="selectRequirement(req)">
+                <div class="list-item-title">{{ req.name }}</div>
+                <div class="list-item-desc text-muted">Starts: {{ req.start_date }}</div>
+            </div>
+            <div *ngIf="requirements.length === 0" class="empty-state">
+                <p>No requirements found.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Detail Pane -->
+    <div class="detail-pane glass-panel detail-container" *ngIf="selectedRequirement">
+        <div class="detail-header">
+            <div class="header-title-block">
+                <h3>{{ selectedRequirement.name }}</h3>
+                <span class="badge" *ngIf="selectedRequirement.ai_validated_description">AI Validated</span>
+            </div>
+            <div class="tabs">
+                <button class="tab-btn" [class.active]="activeTab === 'details'" (click)="activeTab = 'details'">Details
+                    & Assignment</button>
+                <button class="tab-btn" [class.active]="activeTab === 'submissions'"
+                    (click)="activeTab = 'submissions'">Vendor Submissions</button>
+            </div>
+        </div>
+
+        <!-- Tab Content: Details -->
+        <div class="detail-body" *ngIf="activeTab === 'details'">
+            <div class="info-section">
+                <h5>Original Description</h5>
+                <div class="desc-box">{{ selectedRequirement.description }}</div>
+            </div>
+
+            <div class="info-section ai-section" *ngIf="selectedRequirement.ai_validated_description">
+                <h5>AI Enhanced Description</h5>
+                <div class="desc-box enhanced">
+                    {{ selectedRequirement.ai_validated_description }}
+                </div>
+            </div>
+
+            <div class="info-stats form-row">
+                <div class="stat-box flex-1">
+                    <span class="label">Workers Needed</span>
+                    <span class="value">{{ selectedRequirement.workers_required }}</span>
+                </div>
+                <div class="stat-box flex-1">
+                    <span class="label">Start Date</span>
+                    <span class="value">{{ selectedRequirement.start_date }}</span>
+                </div>
+            </div>
+
+            <div class="action-bar flex-row">
+                <button class="btn btn-secondary flex-1" (click)="validateRequirement()"
+                    [disabled]="isValidating || selectedRequirement.ai_validated_description">
+                    <span class="icon">✨</span> {{ isValidating ? 'Validating...' : 'Validate with AI' }}
+                </button>
+            </div>
+
+            <div class="forward-section" *ngIf="selectedRequirement.ai_validated_description">
+                <h5>Select Contractors to Forward</h5>
+                <div class="contractor-list">
+                    <div class="contractor-item" *ngFor="let c of contractorsList">
+                        <input type="checkbox" [id]="'contractor_' + c.id" (change)="toggleContractorSelection(c.id)"
+                            [checked]="selectedContractors.includes(c.id)">
+                        <label [for]="'contractor_' + c.id">{{ c.name }}</label>
+                    </div>
+                </div>
+                <button class="btn btn-primary mt-3" (click)="forwardToContractors()"
+                    [disabled]="selectedContractors.length === 0">
+                    Forward Requirement
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content: Submissions -->
+        <div class="detail-body" *ngIf="activeTab === 'submissions'">
+            <div class="info-section">
+                <h5>Cumulative Tabular Report</h5>
+                <table class="table" *ngIf="submissions.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Vendor</th>
+                            <th>Rate ($/hr)</th>
+                            <th>Readiness Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let sub of submissions">
+                            <td>{{ sub.contractor_name }}</td>
+                            <td>${{ sub.suggested_rate }}</td>
+                            <td>{{ sub.readiness_date }}</td>
+                            <td><button class="btn btn-sm btn-secondary">Shortlist</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="empty-state" *ngIf="submissions.length === 0">
+                    <p>No vendor submissions yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-pane glass-panel empty-selection" *ngIf="!selectedRequirement">
+        <div class="empty-message">Select a requirement to view details.</div>
+    </div>
+</div>

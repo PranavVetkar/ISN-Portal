@@ -1,0 +1,96 @@
+<div class="split-pane-layout animate-fade-in">
+    <!-- Left List Pane -->
+    <div class="list-pane glass-panel">
+        <div class="pane-header">
+            <h4>Available Requirements</h4>
+        </div>
+        <div class="list-contents">
+            <div class="list-item" *ngFor="let req of requirements" [class.active]="selectedRequirement?.id === req.id"
+                (click)="selectRequirement(req)">
+                <div class="list-item-title">{{ req.name }}</div>
+                <div class="list-item-desc text-muted">Starts: {{ req.start_date }}</div>
+            </div>
+            <div *ngIf="requirements.length === 0" class="empty-state">
+                <p>No new requirements assigned.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Detail Pane -->
+    <div class="detail-pane glass-panel" *ngIf="selectedRequirement">
+        <div class="detail-header">
+            <div class="header-title-block">
+                <h3>{{ selectedRequirement.name }}</h3>
+            </div>
+        </div>
+
+        <div class="detail-body">
+            <!-- Requirement Details -->
+            <div class="info-section">
+                <h5>Requirement Description</h5>
+                <div class="desc-box" [class.enhanced]="selectedRequirement.ai_validated_description">
+                    {{ selectedRequirement.ai_validated_description || selectedRequirement.description }}
+                </div>
+            </div>
+
+            <!-- Action -->
+            <div class="action-bar flex-row" style="margin-top: 2rem;">
+                <button class="btn btn-secondary" (click)="checkCompatibility()" [disabled]="isChecking">
+                    <span class="icon">🤖</span> {{ isChecking ? 'Analyzing...' : 'View Worker Compatibility' }}
+                </button>
+            </div>
+
+            <!-- Workers List -->
+            <div class="workers-section" *ngIf="Object.keys(compatibilityResults).length > 0">
+                <h5 style="margin-top: 2rem; margin-bottom: 1rem; color: var(--color-primary);">Worker Compatibility
+                </h5>
+
+                <div class="worker-card glass-panel" *ngFor="let w of workers">
+                    <div class="worker-info flex-row">
+                        <input type="checkbox" [id]="'w_'+w.id" (change)="toggleWorker(w.id)"
+                            [checked]="selectedWorkers.includes(w.id)">
+                        <label [for]="'w_'+w.id" style="flex: 1; margin-left: 0.5rem; font-weight: 600;">{{ w.name
+                            }}</label>
+
+                        <div class="match-badge" [ngStyle]="{'background': compatibilityResults[w.id]?.match_percentage > 70 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                             'color': compatibilityResults[w.id]?.match_percentage > 70 ? '#10b981' : '#ef4444'}">
+                            {{ compatibilityResults[w.id]?.match_percentage }}% Match
+                        </div>
+                    </div>
+
+                    <div class="suggestions" *ngIf="compatibilityResults[w.id]?.suggested_courses?.length > 0">
+                        <span class="text-muted" style="font-size: 0.85rem;">AI Suggestions: </span>
+                        <span class="course-badge" *ngFor="let c of compatibilityResults[w.id].suggested_courses">{{ c
+                            }}</span>
+                    </div>
+                </div>
+
+                <!-- Submission Form -->
+                <div class="submission-form form-card"
+                    style="margin-top: 2rem; padding: 1.5rem; background: rgba(15, 23, 42, 0.4); border-radius: 8px;">
+                    <h5>Submit Proposal</h5>
+                    <div class="form-row" style="margin-top: 1rem; gap: 1rem; display: flex;">
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label" for="rate">Proposed Rate ($/hr)</label>
+                            <input type="number" id="rate" name="rate" [(ngModel)]="proposedRate" class="form-control"
+                                required min="1">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label class="form-label" for="readyDate">Readiness Date</label>
+                            <input type="date" id="readyDate" name="readyDate" [(ngModel)]="readinessDate"
+                                class="form-control" required>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" (click)="submitApplication()"
+                        [disabled]="selectedWorkers.length === 0 || !proposedRate || !readinessDate || isSubmitting">
+                        {{ isSubmitting ? 'Submitting...' : 'Apply Now' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-pane glass-panel empty-selection" *ngIf="!selectedRequirement">
+        <div class="empty-message">Select an assigned requirement to review.</div>
+    </div>
+</div>
