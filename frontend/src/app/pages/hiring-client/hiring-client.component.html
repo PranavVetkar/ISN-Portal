@@ -1,47 +1,111 @@
-<div class="hc-dashboard animate-fade-in">
-    <div class="dashboard-header-content">
-        <h3>Create New Requirement</h3>
-        <p class="text-muted">Define your project needs to share with ISNs.</p>
+<div class="split-pane-layout animate-fade-in">
+    <!-- Left List Pane -->
+    <div class="list-pane">
+        <div class="pane-header flex-row space-between">
+            <h4>My Requirements</h4>
+            <button class="btn btn-primary btn-sm" (click)="startNewRequirement()">+ New</button>
+        </div>
+        <div class="list-contents">
+            <div class="list-item" *ngFor="let req of requirements" [class.active]="selectedRequirement?.id === req.id"
+                (click)="selectRequirement(req)">
+                <div class="list-item-title">{{ req.name }}</div>
+                <div class="list-item-desc text-muted">Workers: {{ req.workers_required }} | Starts: {{ req.start_date
+                    }}</div>
+            </div>
+            <div *ngIf="requirements.length === 0" class="empty-state">
+                <p>No past requirements.</p>
+            </div>
+        </div>
     </div>
 
-    <div class="glass-panel form-card">
-        <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-        <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    <!-- Right Detail Pane (Create New) -->
+    <div class="detail-pane" *ngIf="isCreatingNew">
+        <div class="detail-header">
+            <div class="header-title-block">
+                <h3>Create New Requirement</h3>
+            </div>
+        </div>
 
-        <form (ngSubmit)="onSubmit()" #reqForm="ngForm" class="requirement-form">
-            <div class="form-row">
-                <div class="form-group flex-1">
-                    <label class="form-label" for="name">Project/Requirement Name</label>
-                    <input type="text" id="name" name="name" [(ngModel)]="newRequirement.name" class="form-control"
-                        required placeholder="e.g. Electrical Maintenance Phase 2">
+        <div class="detail-body">
+            <div class="form-card form-container">
+                <form (ngSubmit)="onSubmit()" #reqForm="ngForm">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Project Name</label>
+                        <input type="text" id="name" name="name" [(ngModel)]="newRequirement.name" class="form-control"
+                            required placeholder="e.g., Downtown Expansion">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label class="form-label" for="workers">Workers Required</label>
+                            <input type="number" id="workers" name="workers_required"
+                                [(ngModel)]="newRequirement.workers_required" class="form-control" required min="1">
+                        </div>
+
+                        <div class="form-group flex-1">
+                            <label class="form-label" for="startDate">Start Date</label>
+                            <input type="date" id="startDate" name="start_date" [(ngModel)]="newRequirement.start_date"
+                                class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="description">Detailed Description</label>
+                        <textarea id="description" name="description" [(ngModel)]="newRequirement.description"
+                            class="form-control" rows="5" required
+                            placeholder="Describe the skills and timeline needed..."></textarea>
+                    </div>
+
+                    <div class="alert success-alert" *ngIf="successMessage">{{ successMessage }}</div>
+                    <div class="alert error-alert" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+                    <button type="submit" class="btn btn-primary" [disabled]="!reqForm.form.valid || isSubmitting">
+                        {{ isSubmitting ? 'Publishing...' : 'Publish Requirement' }}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Detail Pane (View Selected) -->
+    <div class="detail-pane" *ngIf="selectedRequirement && !isCreatingNew">
+        <div class="detail-header">
+            <div class="header-title-block">
+                <h3>{{ selectedRequirement.name }}</h3>
+                <span class="badge" *ngIf="selectedRequirement.ai_validated_description">AI Validated</span>
+            </div>
+        </div>
+
+        <div class="detail-body">
+            <div class="info-section">
+                <h5>Original Description</h5>
+                <div class="desc-box">
+                    {{ selectedRequirement.description }}
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label" for="description">Detailed Description</label>
-                <textarea id="description" name="description" [(ngModel)]="newRequirement.description"
-                    class="form-control" rows="5" required
-                    placeholder="Describe the work required, specific skills, and expectations..."></textarea>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group flex-1">
-                    <label class="form-label" for="workers">Number of Workers Required</label>
-                    <input type="number" id="workers" name="workers" [(ngModel)]="newRequirement.workers_required"
-                        class="form-control" required min="1">
-                </div>
-                <div class="form-group flex-1">
-                    <label class="form-label" for="startDate">Starting Date of Work</label>
-                    <input type="date" id="startDate" name="startDate" [(ngModel)]="newRequirement.start_date"
-                        class="form-control" required>
+            <div class="info-section" *ngIf="selectedRequirement.ai_validated_description">
+                <h5 style="margin-top:2rem;">AI Enhanced Description</h5>
+                <div class="desc-box enhanced">
+                    {{ selectedRequirement.ai_validated_description }}
                 </div>
             </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary" [disabled]="!reqForm.valid || isSubmitting">
-                    {{ isSubmitting ? 'Publishing...' : 'Publish Requirement' }}
-                </button>
+            <div class="form-row" style="margin-top: 2rem;">
+                <div class="flex-1">
+                    <label class="form-label text-muted">Workers Required</label>
+                    <div style="font-size:1.1rem; font-weight:600;">{{ selectedRequirement.workers_required }}</div>
+                </div>
+                <div class="flex-1">
+                    <label class="form-label text-muted">Start Date</label>
+                    <div style="font-size:1.1rem; font-weight:600;">{{ selectedRequirement.start_date }}</div>
+                </div>
             </div>
-        </form>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="detail-pane empty-selection" *ngIf="!selectedRequirement && !isCreatingNew">
+        <div class="empty-message">Select a past requirement to view or create a new one.</div>
     </div>
 </div>

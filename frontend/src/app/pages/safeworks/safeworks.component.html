@@ -56,17 +56,16 @@
                 </div>
             </div>
 
-            <div class="action-bar flex-row">
-                <button class="btn btn-secondary flex-1" (click)="validateRequirement()"
-                    [disabled]="isValidating || selectedRequirement.ai_validated_description">
-                    <span class="icon">✨</span> {{ isValidating ? 'Validating...' : 'Validate with AI' }}
+            <div class="action-bar" style="margin-top: 2rem;">
+                <button class="btn btn-secondary" (click)="validateRequirement()" [disabled]="isValidating">
+                    {{ isValidating ? 'Analyzing...' : 'Validate with AI' }}
                 </button>
             </div>
 
             <div class="forward-section" *ngIf="selectedRequirement.ai_validated_description">
                 <h5>Select Contractors to Forward</h5>
                 <div class="contractor-list">
-                    <div class="contractor-item" *ngFor="let c of contractorsList">
+                    <div class="contractor-item" *ngFor="let c of contractors">
                         <input type="checkbox" [id]="'contractor_' + c.id" (change)="toggleContractorSelection(c.id)"
                             [checked]="selectedContractors.includes(c.id)">
                         <label [for]="'contractor_' + c.id">{{ c.name }}</label>

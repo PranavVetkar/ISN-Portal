@@ -6,14 +6,21 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-2.5-flash')
 else:
     model = None
     print("WARNING: GEMINI_API_KEY not found. Using mock AI responses.")
 
 def validate_requirement_ai(description: str) -> str:
     if model:
-        prompt = f"Please provide a simplified and enhanced version of the following job requirement description, making it professional and clear:\n\n{description}"
+        prompt = f"""
+        You are an expert technical project manager and Safeworks consultant.
+        Please enhance the following job requirement description to make it highly professional, structured, and clear.
+        Use bullet points for key responsibilities and required skills. Maintain a professional and concise tone.
+        
+        Original Requirement:
+        {description}
+        """
         try:
             response = model.generate_content(prompt)
             return response.text.strip()

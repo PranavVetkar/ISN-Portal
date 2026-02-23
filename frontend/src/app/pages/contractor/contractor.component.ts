@@ -26,19 +26,19 @@ export class ContractorComponent implements OnInit {
   readinessDate: string = '';
   isSubmitting = false;
 
-  contractorId = 1; // Mock logged-in contractor
+  get contractorId(): number {
+    return parseInt(localStorage.getItem('userId') || '5', 10);
+  }
 
   constructor(private apiService: ApiService) { }
 
   ngOnInit() {
-    this.apiService.getRequirements().subscribe(data => {
-      // Mock: showing all requirements for demonstration
+    this.apiService.getAssignedRequirements(this.contractorId).subscribe(data => {
       this.requirements = data;
     });
 
     this.apiService.getWorkers(this.contractorId).subscribe(data => {
       this.workers = data;
-      // If no workers, mock some for demo
       if (this.workers.length === 0) {
         this.workers = [
           { id: 101, name: 'John Doe', contractor_id: 1, certifications: 'OSHA 30, First Aid', years_experience: 5 },
@@ -93,6 +93,7 @@ export class ContractorComponent implements OnInit {
 
     const sub = {
       requirement_id: this.selectedRequirement.id!,
+      contractor_id: this.contractorId,
       worker_ids: this.selectedWorkers.join(','),
       suggested_rate: this.proposedRate,
       readiness_date: this.readinessDate

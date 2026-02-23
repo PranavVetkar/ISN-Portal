@@ -43,9 +43,13 @@
     color: var(--color-text-muted);
 }
 
+.empty-message {
+    font-size: 1.1rem;
+}
+
 .detail-header {
-    padding: 2rem 2.5rem;
-    border-bottom: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .header-title-block {
@@ -105,7 +109,7 @@
 }
 
 .desc-box {
-    background: rgba(15, 23, 42, 0.4);
+    background: var(--color-background-secondary);
     padding: 1.5rem;
     border-radius: 8px;
     border: 1px solid var(--glass-border);

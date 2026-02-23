@@ -3,7 +3,7 @@ import { LandingComponent } from './pages/landing/landing.component';
 import { LoginComponent } from './pages/login/login.component';
 import { DashboardComponent } from './layouts/dashboard/dashboard.component';
 import { HiringClientComponent } from './pages/hiring-client/hiring-client.component';
-import { IsnComponent } from './pages/isn/isn.component';
+import { SafeworksComponent } from './pages/safeworks/safeworks.component';
 import { ContractorComponent } from './pages/contractor/contractor.component';
 
 export const routes: Routes = [
@@ -14,7 +14,7 @@ export const routes: Routes = [
     component: DashboardComponent,
     children: [
       { path: 'hc', component: HiringClientComponent },
-      { path: 'isn', component: IsnComponent },
+      { path: 'safeworks', component: SafeworksComponent },
       { path: 'contractor', component: ContractorComponent },
       { path: '', redirectTo: 'hc', pathMatch: 'full' }
     ]

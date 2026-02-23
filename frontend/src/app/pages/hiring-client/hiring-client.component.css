@@ -1,22 +1,116 @@
-.hc-dashboard {
-    padding: 2rem;
+.split-pane-layout {
+    display: flex;
     height: 100%;
+    width: 100%;
+}
+
+.list-pane {
+    width: 350px;
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+}
+
+.pane-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+}
+
+.flex-row.space-between {
+    justify-content: space-between;
+}
+
+.pane-header h4 {
+    margin: 0;
+    color: var(--color-primary);
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.list-contents {
+    flex: 1;
     overflow-y: auto;
 }
 
-.dashboard-header-content {
-    margin-bottom: 2rem;
+.list-item {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--color-surface);
 }
 
-.dashboard-header-content h3 {
-    font-size: 1.75rem;
+.list-item:hover {
+    background: var(--color-surface-hover);
+}
+
+.list-item.active {
+    background: rgba(37, 99, 235, 0.05);
+    border-left: 3px solid var(--color-primary);
+}
+
+.list-item-title {
+    font-weight: 600;
+    font-size: 1.05rem;
     margin-bottom: 0.5rem;
-    color: var(--color-text);
+    color: var(--color-text-main);
 }
 
-.form-card {
-    max-width: 800px;
+.list-item-desc {
+    font-size: 0.85rem;
+}
+
+.empty-state {
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.detail-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.empty-selection {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+}
+
+.detail-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+
+.header-title-block {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.header-title-block h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.detail-body {
     padding: 2.5rem;
+    flex: 1;
+}
+
+.form-container {
+    max-width: 600px;
+    padding: 2rem;
 }
 
 .form-row {
@@ -28,27 +122,40 @@
     flex: 1;
 }
 
-.form-actions {
-    margin-top: 2rem;
-    display: flex;
-    justify-content: flex-end;
-}
-
 .alert {
     padding: 1rem;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     margin-bottom: 1.5rem;
     font-size: 0.95rem;
 }
 
-.alert-success {
+.success-alert {
     background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
     border: 1px solid rgba(16, 185, 129, 0.2);
-    color: #10b981;
 }
 
-.alert-danger {
+.error-alert {
     background: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
     border: 1px solid rgba(239, 68, 68, 0.2);
-    color: #ef4444;
+}
+
+.info-section h5 {
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.desc-box {
+    background: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    line-height: 1.6;
+}
+
+.desc-box.enhanced {
+    background: rgba(37, 99, 235, 0.05);
+    border-color: rgba(37, 99, 235, 0.3);
 }

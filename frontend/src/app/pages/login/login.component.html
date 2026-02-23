@@ -1,25 +1,38 @@
 <div class="login-container">
-    <div class="glass-panel login-card animate-fade-in">
+    <div class="login-card glass-panel">
         <div class="login-header">
-            <h2 class="gradient-text">Welcome Back</h2>
-            <p class="subtitle">Please select your portal role to continue.</p>
+            <h2>Welcome Back</h2>
+            <p class="text-muted">Sign in to your account</p>
         </div>
 
-        <form (ngSubmit)="onLogin()" class="login-form">
+        <form (submit)="onLogin(); $event.preventDefault()">
             <div class="form-group">
-                <label for="role" class="form-label">Login as:</label>
+                <label class="form-label" for="roleSelect">Login as:</label>
                 <div class="select-wrapper">
-                    <select id="role" name="role" [(ngModel)]="selectedRole" class="form-control custom-select">
-                        <option *ngFor="let role of roles" [value]="role.id">
-                            {{ role.name }}
-                        </option>
+                    <select id="roleSelect" [(ngModel)]="selectedRole" name="role" class="form-control">
+                        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
                     </select>
-                    <div class="select-arrow">▼</div>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-block">
-                Continue to Portal
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" id="email" [(ngModel)]="email" name="email" class="form-control"
+                    placeholder="user@example.com" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input type="password" id="password" [(ngModel)]="password" name="password" class="form-control"
+                    placeholder="••••••••" required>
+            </div>
+
+            <div class="error-msg" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+
+            <button type="submit" class="btn btn-primary login-btn" [disabled]="isLoggingIn">
+                {{ isLoggingIn ? 'Signing in...' : 'Sign In' }}
             </button>
         </form>
     </div>

@@ -3,25 +3,26 @@ import { CommonModule } from '@angular/common';
 import { ApiService, Requirement } from '../../services/api.service';
 
 @Component({
-  selector: 'app-isn',
+  selector: 'app-safeworks',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './isn.component.html',
-  styleUrl: './isn.component.css'
+  templateUrl: './safeworks.component.html',
+  styleUrl: './safeworks.component.css'
 })
-export class IsnComponent implements OnInit {
+export class SafeworksComponent implements OnInit {
   requirements: Requirement[] = [];
   selectedRequirement: Requirement | null = null;
   submissions: any[] = [];
 
   isValidating = false;
+  isForwarding = false;
   activeTab = 'details'; // 'details' | 'submissions'
 
   // Mock Contractors for selection
-  contractorsList = [
-    { id: 1, name: 'Alpha Builders Inc' },
-    { id: 2, name: 'Beta Constructors' },
-    { id: 3, name: 'Gamma Electrical' }
+  contractors = [
+    { id: 5, name: 'Apex Construction' },
+    { id: 6, name: 'BuildWell Inc.' },
+    { id: 7, name: 'City Scaffolders' }
   ];
   selectedContractors: number[] = [];
 
@@ -32,7 +33,7 @@ export class IsnComponent implements OnInit {
   }
 
   loadRequirements() {
-    this.apiService.getRequirements().subscribe(data => {
+    this.apiService.getAllRequirements().subscribe(data => {
       this.requirements = data;
       if (this.requirements.length > 0 && !this.selectedRequirement) {
         this.selectRequirement(this.requirements[0]);
@@ -84,7 +85,19 @@ export class IsnComponent implements OnInit {
   }
 
   forwardToContractors() {
-    if (this.selectedContractors.length === 0) return;
-    alert(`Requirement forwarded to ${this.selectedContractors.length} contractors!`);
+    if (!this.selectedRequirement?.id || this.selectedContractors.length === 0) return;
+    this.isForwarding = true;
+
+    this.apiService.forwardRequirement(this.selectedRequirement.id, this.selectedContractors).subscribe({
+      next: () => {
+        alert(`Requirement forwarded successfully to ${this.selectedContractors.length} contractors!`);
+        this.isForwarding = false;
+        this.selectedContractors = [];
+      },
+      error: (err) => {
+        alert('Failed to forward requirement');
+        this.isForwarding = false;
+      }
+    });
   }
 }

@@ -36,25 +36,44 @@ export class ApiService {
 
     constructor(private http: HttpClient) { }
 
+    // --- Auth ---
+    login(email: string, password: string): Observable<any> {
+        return this.http.post<any>(`${this.baseUrl}/api/login`, { email, password });
+    }
+
     // --- Hiring Client ---
-    createRequirement(req: Requirement): Observable<Requirement> {
-        return this.http.post<Requirement>(`${this.baseUrl}/hc/requirements/`, req);
+    createRequirement(req: Requirement, hcId: number): Observable<Requirement> {
+        // Send hc_id merged into the requirement object
+        const payload = { ...req, hc_id: hcId };
+        return this.http.post<Requirement>(`${this.baseUrl}/hc/requirements/`, payload);
     }
 
-    getRequirements(): Observable<Requirement[]> {
-        return this.http.get<Requirement[]>(`${this.baseUrl}/hc/requirements/`);
+    getRequirements(hcId: number): Observable<Requirement[]> {
+        return this.http.get<Requirement[]>(`${this.baseUrl}/hc/requirements/${hcId}`);
     }
 
-    // --- ISN ---
+    // --- Safeworks ---
+    getAllRequirements(): Observable<Requirement[]> {
+        return this.http.get<Requirement[]>(`${this.baseUrl}/safeworks/requirements/`);
+    }
+
     validateRequirementAi(reqId: number): Observable<Requirement> {
-        return this.http.post<Requirement>(`${this.baseUrl}/isn/requirements/${reqId}/validate`, {});
+        return this.http.post<Requirement>(`${this.baseUrl}/safeworks/requirements/${reqId}/validate`, {});
+    }
+
+    forwardRequirement(reqId: number, contractorIds: number[]): Observable<any> {
+        return this.http.post<any>(`${this.baseUrl}/safeworks/requirements/${reqId}/forward`, { contractor_ids: contractorIds });
     }
 
     getSubmissions(reqId: number): Observable<any[]> {
-        return this.http.get<any[]>(`${this.baseUrl}/isn/submissions/${reqId}`);
+        return this.http.get<any[]>(`${this.baseUrl}/safeworks/submissions/${reqId}`);
     }
 
     // --- Contractor ---
+    getAssignedRequirements(contractorId: number): Observable<Requirement[]> {
+        return this.http.get<Requirement[]>(`${this.baseUrl}/contractor/requirements/${contractorId}`);
+    }
+
     getWorkers(contractorId: number): Observable<Worker[]> {
         return this.http.get<Worker[]>(`${this.baseUrl}/contractor/workers/${contractorId}`);
     }

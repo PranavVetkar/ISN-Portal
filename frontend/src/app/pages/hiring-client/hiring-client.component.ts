@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService, Requirement } from '../../services/api.service';
@@ -10,7 +10,11 @@ import { ApiService, Requirement } from '../../services/api.service';
   templateUrl: './hiring-client.component.html',
   styleUrl: './hiring-client.component.css'
 })
-export class HiringClientComponent {
+export class HiringClientComponent implements OnInit {
+  requirements: Requirement[] = [];
+  selectedRequirement: Requirement | null = null;
+  isCreatingNew: boolean = false;
+
   newRequirement: Requirement = {
     name: '',
     description: '',
@@ -24,17 +28,57 @@ export class HiringClientComponent {
 
   constructor(private apiService: ApiService) { }
 
+  ngOnInit() {
+    this.loadRequirements();
+  }
+
+  get hcId(): number {
+    return parseInt(localStorage.getItem('userId') || '1', 10);
+  }
+
+  loadRequirements() {
+    this.apiService.getRequirements(this.hcId).subscribe({
+      next: (reqs) => {
+        this.requirements = reqs;
+      },
+      error: (err) => {
+        console.error("Failed to load requirements", err);
+      }
+    });
+  }
+
+  selectRequirement(req: Requirement) {
+    this.selectedRequirement = req;
+    this.isCreatingNew = false;
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
+
+  startNewRequirement() {
+    this.selectedRequirement = null;
+    this.isCreatingNew = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.newRequirement = {
+      name: '',
+      description: '',
+      workers_required: 1,
+      start_date: ''
+    };
+  }
+
   onSubmit() {
     this.isSubmitting = true;
     this.successMessage = '';
     this.errorMessage = '';
 
-    this.apiService.createRequirement(this.newRequirement).subscribe({
+    this.apiService.createRequirement(this.newRequirement, this.hcId).subscribe({
       next: (res) => {
         this.successMessage = 'Requirement published successfully!';
         this.isSubmitting = false;
-        // Reset form
-        this.newRequirement = { name: '', description: '', workers_required: 1, start_date: '' };
+        this.loadRequirements();
+        this.isCreatingNew = false;
+        this.selectedRequirement = res;
       },
       error: (err) => {
         this.errorMessage = 'Failed to publish requirement. Please try again.';
